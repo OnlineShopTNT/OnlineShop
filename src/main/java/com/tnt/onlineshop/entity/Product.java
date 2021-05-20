@@ -1,5 +1,6 @@
 package com.tnt.onlineshop.entity;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -9,7 +10,7 @@ public class Product {
     private int id;
     private String name;
     private double price;
-    private LocalDateTime lastModifiedTime;
+    private Timestamp lastModifiedTime;
 
     public int getId() {
         return id;
@@ -35,11 +36,11 @@ public class Product {
         this.price = price;
     }
 
-    public LocalDateTime getLastModifiedTime() {
+    public Timestamp getLastModifiedTime() {
         return lastModifiedTime;
     }
 
-    public void setLastModifiedTime(LocalDateTime lastModifiedTime) {
+    public void setLastModifiedTime(Timestamp lastModifiedTime) {
         this.lastModifiedTime = lastModifiedTime;
     }
 
