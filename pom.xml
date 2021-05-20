@@ -9,8 +9,30 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>15</maven.compiler.source>
-        <maven.compiler.target>15</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!--Plugins-->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <!--Dependencies-->
+        <postgresql.version>42.2.17</postgresql.version>
+        <hikari.cp.version>3.4.5</hikari.cp.version>
     </properties>
+
+    <dependencies>
+        <!--POSTGRES-->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgresql.version}</version>
+        </dependency>
+        <!--HIKARICP-->
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+            <version>${hikari.cp.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>
