@@ -47,8 +47,8 @@
             <version>${system.lambda.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--TESTS-->
 
+        <!--TESTS-->
 
         <!--MOCKITO-->
         <dependency>
