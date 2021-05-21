@@ -18,6 +18,7 @@
         <!--Dependencies-->
         <postgresql.version>42.2.17</postgresql.version>
         <hikari.cp.version>3.4.5</hikari.cp.version>
+        <jetty.version>11.0.2</jetty.version>
 
         <!--Test Dependencies-->
         <system.lambda.version>1.2.0</system.lambda.version>
@@ -46,8 +47,8 @@
             <version>${system.lambda.version}</version>
             <scope>test</scope>
         </dependency>
-        <!--TESTS-->
 
+        <!--TESTS-->
 
         <!--MOCKITO-->
         <dependency>
@@ -62,6 +63,18 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.engine.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!--JETTY-SERVER-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <!--JETTY-SERVLET-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
     </dependencies>
 
