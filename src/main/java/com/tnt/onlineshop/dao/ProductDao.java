@@ -3,17 +3,18 @@ package com.tnt.onlineshop.dao;
 import com.tnt.onlineshop.entity.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductDao {
 
     List<Product> findAll();
 
-    Product findById(int id);
+    Optional<Product> findById(int id);
 
     boolean add(Product product);
 
     boolean update(Product product);
 
-    boolean remove(int id);
+    boolean delete(int id);
 
 }
