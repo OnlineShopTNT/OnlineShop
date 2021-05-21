@@ -3,12 +3,13 @@ package com.tnt.onlineshop.service;
 import com.tnt.onlineshop.entity.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductService {
 
     List<Product> findAll();
 
-    Product findById(int id);
+    Optional<Product> findById(int id);
 
     boolean add(Product product);
 
