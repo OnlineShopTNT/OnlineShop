@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,13 +30,13 @@ public class ProductServlet extends HttpServlet {
 
         int productId = requestUri.lastIndexOf("/");
         String substring = requestUri.substring(productId + 1);
-        if ("products".equals(substring)){
+        if ("products".equals(substring)) {
             productList = productService.findAll();
             jsonProducts.append(jsonConverter.toJson(productList));
         } else {
             productId = Integer.parseInt(substring);
             Optional<Product> product = productService.findById(productId);
-            if (product.isPresent()){
+            if (product.isPresent()) {
                 productList.add(product.get());
                 jsonProducts.append(jsonConverter.toJson(productList));
             }
