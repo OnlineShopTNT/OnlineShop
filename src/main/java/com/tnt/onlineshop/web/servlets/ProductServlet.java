@@ -8,7 +8,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProductServlet extends HttpServlet {
 
@@ -21,9 +25,25 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<Product> productList = productService.findAll();
-        String jsonProducts = jsonConverter.toJson(productList);
-        response.getWriter().write(jsonProducts);
+        StringBuilder jsonProducts = new StringBuilder();
+        List<Product> productList = new ArrayList<>();
+        String requestUri = request.getRequestURI().substring(request.getContextPath().length());
+
+        int productId = requestUri.lastIndexOf("/");
+        String substring = requestUri.substring(productId + 1);
+        if ("products".equals(substring)){
+            productList = productService.findAll();
+            jsonProducts.append(jsonConverter.toJson(productList));
+        } else {
+            productId = Integer.parseInt(substring);
+            Optional<Product> product = productService.findById(productId);
+            if (product.isPresent()){
+                productList.add(product.get());
+                jsonProducts.append(jsonConverter.toJson(productList));
+            }
+        }
+
+        response.getWriter().write(jsonProducts.toString());
     }
 
     @Override
