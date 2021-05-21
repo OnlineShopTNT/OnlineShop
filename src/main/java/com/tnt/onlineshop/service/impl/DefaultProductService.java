@@ -5,6 +5,7 @@ import com.tnt.onlineshop.entity.Product;
 import com.tnt.onlineshop.service.ProductService;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DefaultProductService implements ProductService {
 
@@ -20,7 +21,7 @@ public class DefaultProductService implements ProductService {
     }
 
     @Override
-    public Product findById(int id) {
+    public Optional<Product> findById(int id) {
         if (id > 0){
             return productDao.findById(id);
         } else {
@@ -49,7 +50,7 @@ public class DefaultProductService implements ProductService {
     @Override
     public boolean remove(int id) {
         if (id > 0){
-            return productDao.remove(id);
+            return productDao.delete(id);
         } else {
             throw new RuntimeException("Id is 0 or less", new IllegalArgumentException());
         }

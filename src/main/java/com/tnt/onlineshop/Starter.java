@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class Starter {
+
     public static void main(String[] args) {
 
         //DAO
@@ -21,4 +22,5 @@ public class Starter {
 
         JdbcProductDao jdbcProductDao = new JdbcProductDao(dataSource);
     }
+
 }

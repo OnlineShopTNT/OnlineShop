@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,7 +19,7 @@ class ProductRowMapperTest {
     @Test
     @DisplayName("Checks if product created from resultSet has all fields right.")
     void mapRowTest() throws SQLException {
-    //prepare
+        //prepare
         ResultSet resultSet = mock(ResultSet.class);
         when(resultSet.getInt("id")).thenReturn(1);
         when(resultSet.getString("name")).thenReturn("productname");
