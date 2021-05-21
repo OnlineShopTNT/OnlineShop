@@ -11,7 +11,7 @@ public class DefaultProductService implements ProductService {
 
     private final ProductDao productDao;
 
-    public DefaultProductService(ProductDao productDao){
+    public DefaultProductService(ProductDao productDao) {
         this.productDao = productDao;
     }
 
@@ -22,7 +22,7 @@ public class DefaultProductService implements ProductService {
 
     @Override
     public Optional<Product> findById(int id) {
-        if (id > 0){
+        if (id > 0) {
             return productDao.findById(id);
         } else {
             throw new RuntimeException("Id is 0 or less", new IllegalArgumentException());
@@ -31,7 +31,7 @@ public class DefaultProductService implements ProductService {
 
     @Override
     public boolean add(Product product) {
-        if (product != null){
+        if (product != null) {
             return productDao.add(product);
         } else {
             throw new RuntimeException("Entity Product is null");
@@ -40,7 +40,7 @@ public class DefaultProductService implements ProductService {
 
     @Override
     public boolean update(Product product) {
-        if (product != null){
+        if (product != null) {
             return productDao.update(product);
         } else {
             throw new RuntimeException("Entity Product is null");
@@ -49,7 +49,7 @@ public class DefaultProductService implements ProductService {
 
     @Override
     public boolean delete(int id) {
-        if (id > 0){
+        if (id > 0) {
             return productDao.delete(id);
         } else {
             throw new RuntimeException("Id is 0 or less", new IllegalArgumentException());
