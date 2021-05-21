@@ -48,7 +48,7 @@ public class DefaultProductService implements ProductService {
     }
 
     @Override
-    public boolean remove(int id) {
+    public boolean delete(int id) {
         if (id > 0){
             return productDao.delete(id);
         } else {
