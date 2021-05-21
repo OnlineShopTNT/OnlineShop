@@ -1,10 +1,12 @@
 package com.tnt.onlineshop;
 
+import com.tnt.onlineshop.dao.imp.JdbcProductDao;
 import com.tnt.onlineshop.util.PropertiesReader;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 public class Starter {
+
     public static void main(String[] args) {
 
         //DAO
@@ -17,5 +19,8 @@ public class Starter {
         config.setDriverClassName(propertiesReader.getProperty("jdbc.driver"));
         config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
+
+        JdbcProductDao jdbcProductDao = new JdbcProductDao(dataSource);
     }
+
 }

@@ -1,13 +1,14 @@
 package com.tnt.onlineshop.entity;
 
-import java.time.LocalDate;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Product {
+
     private int id;
     private String name;
     private double price;
-    private LocalDate lastModificationDate;
+    private Timestamp lastModifiedTime;
 
     public int getId() {
         return id;
@@ -33,12 +34,12 @@ public class Product {
         this.price = price;
     }
 
-    public LocalDate getLastModificationDate() {
-        return lastModificationDate;
+    public Timestamp getLastModifiedTime() {
+        return lastModifiedTime;
     }
 
-    public void setLastModificationDate(LocalDate lastModificationDate) {
-        this.lastModificationDate = lastModificationDate;
+    public void setLastModifiedTime(Timestamp lastModifiedTime) {
+        this.lastModifiedTime = lastModifiedTime;
     }
 
     @Override
@@ -47,7 +48,7 @@ public class Product {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", price=" + price +
-                ", lastModificationDate=" + lastModificationDate +
+                ", lastModificationDate=" + lastModifiedTime +
                 '}';
     }
 
@@ -65,4 +66,5 @@ public class Product {
     public int hashCode() {
         return Objects.hash(id, name, price);
     }
+
 }
