@@ -26,22 +26,25 @@ public class ProductServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         StringBuilder jsonProducts = new StringBuilder();
         List<Product> productList = new ArrayList<>();
-        String requestUri = request.getRequestURI().substring(request.getContextPath().length());
+        String requestUri = request.getRequestURI();
 
         int productId = requestUri.lastIndexOf("/");
         String substring = requestUri.substring(productId + 1);
         if ("products".equals(substring)) {
             productList = productService.findAll();
             jsonProducts.append(jsonConverter.toJson(productList));
+            response.setStatus(HttpServletResponse.SC_OK);
         } else {
             productId = Integer.parseInt(substring);
             Optional<Product> product = productService.findById(productId);
             if (product.isPresent()) {
                 productList.add(product.get());
                 jsonProducts.append(jsonConverter.toJson(productList));
+                response.setStatus(HttpServletResponse.SC_OK);
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
         }
-        response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json; charset=UTF-8");
         response.getWriter().write(jsonProducts.toString());
     }
