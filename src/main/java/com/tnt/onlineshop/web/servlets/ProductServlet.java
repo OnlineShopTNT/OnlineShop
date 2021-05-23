@@ -1,6 +1,7 @@
 package com.tnt.onlineshop.web.servlets;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.tnt.onlineshop.entity.Product;
 import com.tnt.onlineshop.json.JsonConverter;
 import com.tnt.onlineshop.service.ProductService;
@@ -9,13 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Reader;
 import java.util.Optional;
 
 public class ProductServlet extends HttpServlet {
 
-    private final JsonConverter jsonConverter = new JsonConverter();
+    private static final JsonConverter jsonConverter = new JsonConverter();
+    private static final Gson gson = new Gson();
     private final ProductService productService;
 
     public ProductServlet(ProductService productService) {
@@ -24,29 +25,30 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        StringBuilder jsonProducts = new StringBuilder();
-        List<Product> productList = new ArrayList<>();
+        StringBuilder jsonFormatProducts = new StringBuilder();
         String requestUri = request.getRequestURI();
+        int responseStatus = HttpServletResponse.SC_OK;
 
-        int productId = requestUri.lastIndexOf("/");
-        String substring = requestUri.substring(productId + 1);
-        if ("products".equals(substring)) {
-            productList = productService.findAll();
-            jsonProducts.append(jsonConverter.toJson(productList));
-            response.setStatus(HttpServletResponse.SC_OK);
+        int lastSlashIndex = requestUri.lastIndexOf("/");
+        String substringAfterLastSlash = requestUri.substring(lastSlashIndex + 1);
+        if ("products".equals(substringAfterLastSlash)) {
+            jsonFormatProducts.append(jsonConverter.toJson(productService.findAll()));
         } else {
-            productId = Integer.parseInt(substring);
-            Optional<Product> product = productService.findById(productId);
-            if (product.isPresent()) {
-                productList.add(product.get());
-                jsonProducts.append(jsonConverter.toJson(productList));
-                response.setStatus(HttpServletResponse.SC_OK);
-            } else {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try {
+                int id = Integer.parseInt(substringAfterLastSlash);
+                Optional<Product> product = productService.findById(id);
+                if (product.isPresent()) {
+                    jsonFormatProducts.append(gson.toJson(product.get()));
+                } else {
+                    responseStatus = HttpServletResponse.SC_NOT_FOUND;
+                }
+            } catch (NumberFormatException e) {
+                responseStatus = HttpServletResponse.SC_BAD_REQUEST;
             }
         }
+        response.setStatus(responseStatus);
         response.setContentType("application/json; charset=UTF-8");
-        response.getWriter().write(jsonProducts.toString());
+        response.getWriter().write(jsonFormatProducts.toString());
     }
 
     @Override
@@ -57,29 +59,62 @@ public class ProductServlet extends HttpServlet {
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
-        response.setContentType("application/json; charset=UTF-8");
     }
 
     @Override
     public void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Product product = jsonConverter.toProduct(request.getReader());
-        if (productService.update(product)) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        Reader reader = request.getReader();
+        String requestUri = request.getRequestURI();
+        int responseStatus = HttpServletResponse.SC_OK;
+        JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+
+        try {
+            int id = getIdFromUri(requestUri);
+            if (jsonObject.keySet().contains("name") || jsonObject.keySet().contains("price")) {
+                Optional<Product> productOptional = productService.findById(id);
+                if (productOptional.isEmpty()) {
+                    responseStatus = HttpServletResponse.SC_NOT_FOUND;
+                } else {
+                    Product updatedProduct = productOptional.get();
+                    if (jsonObject.has("name")) {
+                        updatedProduct.setName(jsonObject.get("name").getAsString());
+                    }
+                    if (jsonObject.has("price")) {
+                        updatedProduct.setPrice(jsonObject.get("price").getAsDouble());
+                    }
+                    if (!productService.update(updatedProduct)) {
+                        responseStatus = HttpServletResponse.SC_BAD_REQUEST;
+                    }
+                }
+            } else {
+                responseStatus = HttpServletResponse.SC_BAD_REQUEST;
+            }
+        } catch (NumberFormatException e) {
+            responseStatus = HttpServletResponse.SC_BAD_REQUEST;
         }
-        response.setContentType("application/json; charset=UTF-8");
+        response.setStatus(responseStatus);
     }
 
     @Override
-    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Gson gson = new Gson();
-        int productId = gson.fromJson(request.getReader(), int.class);
-        if (productService.delete(productId)) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) {
+        String requestUri = request.getRequestURI();
+        int responseStatus = HttpServletResponse.SC_OK;
+        try {
+            int productId = getIdFromUri(requestUri);
+            if (!productService.delete(productId)) {
+                responseStatus = HttpServletResponse.SC_NOT_FOUND;
+            }
+        } catch (NumberFormatException e) {
+            responseStatus = HttpServletResponse.SC_BAD_REQUEST;
         }
-        response.setContentType("application/json; charset=UTF-8");
+        response.setStatus(responseStatus);
     }
+
+    int getIdFromUri(String uri) {
+        int lastSlashIndex = uri.lastIndexOf("/");
+        String substringAfterLastSlash = uri.substring(lastSlashIndex + 1);
+        int id = Integer.parseInt(substringAfterLastSlash);
+        return id;
+    }
+
 }
