@@ -1,0 +1,20 @@
+codecov:
+  token: "29288651-646f-4abc-a401-427df5be45e7"
+  require_ci_to_pass: yes
+
+coverage:
+  notify:
+    slack:
+      default:
+        url: "https://hooks.slack.com/services/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"
+        branches:
+          - "master"
+  precision: 2
+  round: down
+  range: "70...100"
+
+ignore:
+  - "src/main/java/com/vinylteam/vinyl/entity"
+
+
+
