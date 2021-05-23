@@ -36,7 +36,7 @@ public class Starter {
 
         ProductServlet productServlet = new ProductServlet(productService);
 
-        servletContextHandler.addServlet(new ServletHolder(productServlet), "/products");
+        servletContextHandler.addServlet(new ServletHolder(productServlet), "/products/*");
 
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);
