@@ -9,14 +9,16 @@ env:
     - CODECOV_TOKEN='29288651-646f-4abc-a401-427df5be45e7'
 services:
   - postgresql
-#deploy:
-#  provider: heroku
-#  app: OnlineShop
-#  on:
-#    branch: master
-#  strategy: git
-#  api_key:
-#    secure: u68eGuIPSuV9OIVw2/wpWvq7MZUnxcx6SViz2iGu4Ss0b2yMYLRF8Ev6fGHhoiKOkBqnW503+CbA6dmOVBoKr5ETJCMqVdqamV0CJ2C2k3jq8v3UywhAq+7l7Z4IxRHfmm8nLFc5xUOQ6B6Fy3zZgJZN7MsjPr4UrfJ86qVdHbrhROWw/R5T8mLJf6pmvrYTiaqvGXiasYXo12zCv6+LCn9lmA4SDKR4pJZDWe5ifWQa3DQ19xQMnDN578d5uQiuS2jxKyWw9Iy9Qx4FRUR2DLOXDdNd8epqBMDcxPMsO9kCuL4F0Yjc+KZFIDB6bO0zp+xUyY86zKZGxvQe6SUdApORW9p8sFJA80Jx+8+4wpJSvc+bsyq/8DeYLwaJiNqVHs9MIB9m519Ko8dzU/w2UxPVlrKKro+CFxOQHEvZXpkRV/LtiNHFPvQ4IrIepnOpy9J10QdKqe/GqCIAKkniGxtRnZ4EtPAym8LVYu/bIf5MQfqNEbodvdmSfnCtmr9QXNent26xoN5v+LXOpjYmTlY8ea6d5QjnGrnn2WIupBq/QtErQN6vmGG5EJQs8E1PxPmIzAcrSm1SOnRod33OCYD2PSMjM2fsXB6xHf2/6er4/Qa3pfyyDJNQ80WQicJ4XuMYyqnqhFpqasBKrA6Qxgy+DengCIO+4f7IRm0/7Aw=
-
+deploy:
+  provider: heroku
+  app: online-shop-tnt
+  on:
+    branch: master
+  strategy: git
+  api_key:
+    secure: "BuuM4uGO43Bk1WLeh2/86o7bfTrGRAnFXx4BFifZaVDH8cmVpTvfxXxcqmYAjHlmOTe0SgVmw9HK2uiO3YMYHCmxv+OnkNrExDNM2a22r1P6SzSX5JlhqGIW7C+DHlKpqe4I32/LZy/02+KObQuRgCpooMFjomiT2dT5orJzkoyrnt2XlkON7FxV9btLjX9
+    WJC7tzFkhMrkEqUpThht2GM8ztDB2o1adYNXWneOW9+TX+rZAQm2/FEZnG0XkxopdQhiJg1REK30nLmyP9ZxX40lc4Wr+CTHG5w4M33g835BFlvKq2f3eSLMXOiZqCtaovo8xMzohZ15+AeaiO9hSfv7UXF3W1zij7Hmyy4gThfKCS7n1NKHzDTdCvIxyKVy8ZlSmJX+1X
+    WiSMg9raLiZKQcJiTP7PQ+Y11/h2IuMrShawgafLf1zQ8HFMOYpWhFxkkEt6L/BohGWFInzHf1l8kOcjrDpA7hIGNFeh/sklEkQ7yojR1lr43h+gHwWzJQNxOAJH15eyaEPNQHDyQo1Sd/gHq396qD0OnKnk7pV3ZyoIaOp9Zq1RK1oRJRwf2pTzR5lzNGq58iUjFU1yRh
+    qIA9Q0hwJXqjpZJX5ARq8hRmLiCv4B4KFkV4L+wwbaPOOQR9lY5xMtsD8Zbuu/ntc8zqo1+Lsb7WQntAWMumzZmw="
 
 

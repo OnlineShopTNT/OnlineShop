@@ -6,7 +6,7 @@ coverage:
   notify:
     slack:
       default:
-        url: "https://hooks.slack.com/services/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"
+        url: "https://hooks.slack.com/services/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"
         branches:
           - "master"
   precision: 2
