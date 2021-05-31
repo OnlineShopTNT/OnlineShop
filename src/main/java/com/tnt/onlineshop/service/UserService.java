@@ -1,12 +1,10 @@
-package com.tnt.onlineshop.dao;
+package com.tnt.onlineshop.service;
 
 import com.tnt.onlineshop.entity.User;
 
 import java.util.Optional;
 
-public interface UserDao {
-
-    boolean add(User user);
+public interface UserService {
 
     Optional<User> findByEmail(String email);
 

@@ -15,17 +15,17 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public boolean add() {
+    public boolean add(User user) {
         return false;
     }
 
     @Override
-    public Optional<User> findByEmail() {
+    public Optional<User> findByEmail(String email) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<User> findById() {
+    public Optional<User> findById(long id) {
         return Optional.empty();
     }
 
