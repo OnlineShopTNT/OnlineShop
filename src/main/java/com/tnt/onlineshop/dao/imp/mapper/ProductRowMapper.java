@@ -1,12 +1,14 @@
 package com.tnt.onlineshop.dao.imp.mapper;
 
+import com.tnt.onlineshop.dao.RowMapper;
 import com.tnt.onlineshop.entity.Product;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ProductRowMapper {
+public class ProductRowMapper implements RowMapper<Product> {
 
+    @Override
     public Product mapRow(ResultSet resultSet) {
         Product product = new Product();
         try {

@@ -6,10 +6,10 @@ import java.util.Optional;
 
 public interface UserDao {
 
-    boolean add();
+    boolean add(User user);
 
-    Optional<User> findByEmail();
+    Optional<User> findByEmail(String email);
 
-    Optional<User> findById();
+    Optional<User> findById(long id);
 
 }
