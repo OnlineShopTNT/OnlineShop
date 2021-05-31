@@ -1,5 +1,6 @@
 package com.tnt.onlineshop.dao.imp;
 
+import com.tnt.onlineshop.dao.RowMapper;
 import com.tnt.onlineshop.dao.UserDao;
 import com.tnt.onlineshop.dao.imp.mapper.UserRowMapper;
 import com.tnt.onlineshop.entity.User;
@@ -14,17 +15,17 @@ import java.util.Optional;
 
 public class JdbcUserDao implements UserDao {
 
-    private final UserRowMapper userRowMapper = new UserRowMapper();
-    private final static String FIND_BY_EMAIL = "SELECT id, email, hash, salt, iterations" +
+    private static final String FIND_BY_EMAIL = "SELECT id, email, hash, salt, iterations" +
             " FROM public.users" +
             " WHERE email=?";
-    private final static String FIND_BY_ID = "SELECT id, email, hash, salt, iterations" +
+    private static final String FIND_BY_ID = "SELECT id, email, hash, salt, iterations" +
             " FROM public.users" +
             " WHERE id=?";
     private static final String INSERT = "INSERT INTO public.users" +
-            " (email, password, salt, iterations)" +
+            " (email, hash, salt, iterations)" +
             " VALUES (?, ?, ?, ?)";
 
+    private static final RowMapper<User> ROW_MAPPER = new UserRowMapper();
     private final HikariDataSource dataSource;
 
     public JdbcUserDao(HikariDataSource dataSource) {
@@ -61,7 +62,7 @@ public class JdbcUserDao implements UserDao {
             findByEmailStatement.setString(1, email);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    user = userRowMapper.mapRow(resultSet);
+                    user = ROW_MAPPER.mapRow(resultSet);
                     if (resultSet.next()) {
                         throw new RuntimeException("More than one user was found for id");
                     }
@@ -81,7 +82,7 @@ public class JdbcUserDao implements UserDao {
             findByEmailStatement.setLong(1, id);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    user = userRowMapper.mapRow(resultSet);
+                    user = ROW_MAPPER.mapRow(resultSet);
                     if (resultSet.next()) {
                         throw new RuntimeException("More than one user was found for id");
                     }
