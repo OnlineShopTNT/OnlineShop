@@ -2,6 +2,7 @@ package com.tnt.onlineshop.service.impl;
 
 import com.tnt.onlineshop.dao.UserDao;
 import com.tnt.onlineshop.entity.User;
+import com.tnt.onlineshop.security.SecurityService;
 import com.tnt.onlineshop.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,8 @@ import static org.mockito.Mockito.*;
 class DefaultUserServiceTest {
 
     private final UserDao mockedUserDao = mock(UserDao.class);
-    private final UserService userService = new DefaultUserService(mockedUserDao);
+    private final SecurityService mockedSecurityService = mock(SecurityService.class);
+    private final UserService userService = new DefaultUserService(mockedUserDao, mockedSecurityService);
 
     @BeforeEach
     void beforeEach() {

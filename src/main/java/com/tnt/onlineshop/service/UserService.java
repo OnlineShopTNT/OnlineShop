@@ -10,4 +10,8 @@ public interface UserService {
 
     Optional<User> findById(long id);
 
+    boolean add(String email, String password);
+
+    Optional<User> signInCheck(String email, String password);
+
 }
