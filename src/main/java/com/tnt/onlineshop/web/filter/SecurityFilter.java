@@ -41,6 +41,8 @@ public class SecurityFilter implements Filter {
                     chain.doFilter(httpServletRequest, httpServletResponse);
                 }
             }
+        } else {
+            chain.doFilter(httpServletRequest, httpServletResponse);
         }
     }
 

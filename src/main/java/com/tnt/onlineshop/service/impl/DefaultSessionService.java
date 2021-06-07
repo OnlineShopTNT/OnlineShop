@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DefaultSessionService implements SessionService {
 
-    List<Session> sessions = new ArrayList<>();
+    private List<Session> sessions = new ArrayList<>();
 
     @Override
     public Optional<Session> add(User user) {
@@ -34,6 +34,9 @@ public class DefaultSessionService implements SessionService {
     @Override
     public Optional<Session> getByUser(User user) {
         Optional<Session> optionalSession = Optional.empty();
+        if (sessions.isEmpty()){
+            optionalSession = add(user);
+        }
         for (Session session : sessions) {
             if (session.getUser().equals(user)) {
                 if (session.getExpireDate().compareTo(LocalDateTime.now()) < 0) {
@@ -41,9 +44,10 @@ public class DefaultSessionService implements SessionService {
                     session.setExpireDate(LocalDateTime.now().plusHours(5));
                 }
                 optionalSession = Optional.of(session);
-            } else {
-                optionalSession = add(user);
             }
+        }
+        if (optionalSession.isEmpty()){
+            optionalSession = add(user);
         }
         return optionalSession;
     }
@@ -58,4 +62,13 @@ public class DefaultSessionService implements SessionService {
         }
         return isDeleted;
     }
+
+    List<Session> getSessions() {
+        return sessions;
+    }
+
+    void setSessions(List<Session> sessions) {
+        this.sessions = sessions;
+    }
+
 }

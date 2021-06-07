@@ -43,6 +43,7 @@ class SecurityFilterTest {
         //then
         inOrderRequest.verify(mockedRequest).getMethod();
         inOrderRequest.verify(mockedRequest).getRequestURI();
+        verify(mockedFilterChain).doFilter(mockedRequest, mockedResponse);
     }
 
     @Test

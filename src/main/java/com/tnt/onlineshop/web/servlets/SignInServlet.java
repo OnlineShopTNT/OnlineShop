@@ -43,7 +43,6 @@ public class SignInServlet extends HttpServlet {
                 cookie.setMaxAge(60 * 60 * 5);
                 cookie.setHttpOnly(true);
                 response.addCookie(cookie);
-
                 response.setStatus(HttpServletResponse.SC_OK);
                 jsonStringResponse = new JSONObject()
                         .put("message", "Successfully logged in!")
