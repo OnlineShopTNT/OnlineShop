@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DefaultSessionService implements SessionService {
 
@@ -16,12 +17,18 @@ public class DefaultSessionService implements SessionService {
 
     @Override
     public Optional<Session> add(User user) {
-        return Optional.empty();
+        Session session = new Session();
+        session.setId(sessions.size() + 1);
+        session.setToken(UUID.randomUUID().toString());
+        session.setUser(user);
+        session.setExpireDate(LocalDateTime.now().plusHours(5));
+        sessions.add(session);
+        return Optional.of(session);
     }
 
     @Override
     public Optional<Session> getByToken(String token) {
-        return Optional.empty();
+        return sessions.stream().filter(session -> session.getToken().equals(token)).findFirst();
     }
 
     @Override
@@ -29,8 +36,10 @@ public class DefaultSessionService implements SessionService {
         Optional<Session> optionalSession = Optional.empty();
         for (Session session : sessions) {
             if (session.getUser().equals(user)) {
-                session.setToken(UUID.randomUUID().toString());
-                session.setExpireDate(LocalDateTime.now().plusHours(5));
+                if (session.getExpireDate().compareTo(LocalDateTime.now()) < 0) {
+                    session.setToken(UUID.randomUUID().toString());
+                    session.setExpireDate(LocalDateTime.now().plusHours(5));
+                }
                 optionalSession = Optional.of(session);
             } else {
                 optionalSession = add(user);
@@ -41,6 +50,12 @@ public class DefaultSessionService implements SessionService {
 
     @Override
     public boolean delete(String token) {
-        return false;
+        boolean isDeleted = false;
+        List<Session> sessionList = sessions.stream().filter(session -> !session.getToken().equals(token)).collect(Collectors.toList());
+        if (sessionList.size() < sessions.size()) {
+            sessions = new ArrayList<>(sessionList);
+            isDeleted = true;
+        }
+        return isDeleted;
     }
 }
