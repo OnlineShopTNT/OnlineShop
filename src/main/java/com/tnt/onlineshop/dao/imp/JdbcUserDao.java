@@ -69,6 +69,7 @@ public class JdbcUserDao implements UserDao {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return Optional.ofNullable(user);

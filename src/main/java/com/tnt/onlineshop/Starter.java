@@ -13,6 +13,7 @@ import com.tnt.onlineshop.service.impl.DefaultUserService;
 import com.tnt.onlineshop.util.PropertiesReader;
 import com.tnt.onlineshop.web.servlets.ProductServlet;
 import com.tnt.onlineshop.web.servlets.SignInServlet;
+import com.tnt.onlineshop.web.servlets.SignUpServlet;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.eclipse.jetty.server.Server;
@@ -49,9 +50,11 @@ public class Starter {
 
         ProductServlet productServlet = new ProductServlet(productService);
         SignInServlet signInServlet = new SignInServlet(userService);
+        SignUpServlet signUpServlet = new SignUpServlet(userService);
 
         servletContextHandler.addServlet(new ServletHolder(productServlet), "/products/*");
         servletContextHandler.addServlet(new ServletHolder(signInServlet), "/sign-in");
+        servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/sign-up");
 
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);

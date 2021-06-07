@@ -3,7 +3,6 @@ package com.tnt.onlineshop.web.servlets;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.tnt.onlineshop.entity.User;
-import com.tnt.onlineshop.json.JsonConverter;
 import com.tnt.onlineshop.service.UserService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +23,6 @@ public class SignInServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        JsonConverter jsonConverter = new JsonConverter();
         PrintWriter out = response.getWriter();
         String jsonStringResponse;
         Gson gson = new Gson();
@@ -35,7 +33,7 @@ public class SignInServlet extends HttpServlet {
         if (optionalUser.isPresent()) {
             response.setStatus(HttpServletResponse.SC_OK);
             jsonStringResponse = new JSONObject()
-                    .put("message", "Verify is Ok!")
+                    .put("message", "Successfully logged in!")
                     .toString();
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
