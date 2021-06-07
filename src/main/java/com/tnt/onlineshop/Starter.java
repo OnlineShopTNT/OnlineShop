@@ -7,8 +7,10 @@ import com.tnt.onlineshop.dao.imp.JdbcUserDao;
 import com.tnt.onlineshop.security.SecurityService;
 import com.tnt.onlineshop.security.impl.DefaultSecurityService;
 import com.tnt.onlineshop.service.ProductService;
+import com.tnt.onlineshop.service.SessionService;
 import com.tnt.onlineshop.service.UserService;
 import com.tnt.onlineshop.service.impl.DefaultProductService;
+import com.tnt.onlineshop.service.impl.DefaultSessionService;
 import com.tnt.onlineshop.service.impl.DefaultUserService;
 import com.tnt.onlineshop.util.PropertiesReader;
 import com.tnt.onlineshop.web.servlets.ProductServlet;
@@ -44,12 +46,13 @@ public class Starter {
         SecurityService securityService = new DefaultSecurityService();
         ProductService productService = new DefaultProductService(productDao);
         UserService userService = new DefaultUserService(userDao, securityService);
+        SessionService sessionService = new DefaultSessionService();
 
         //WEB
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
         ProductServlet productServlet = new ProductServlet(productService);
-        SignInServlet signInServlet = new SignInServlet(userService);
+        SignInServlet signInServlet = new SignInServlet(userService, sessionService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
 
         servletContextHandler.addServlet(new ServletHolder(productServlet), "/products/*");
