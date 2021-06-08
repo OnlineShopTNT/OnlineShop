@@ -63,9 +63,6 @@ public class JdbcUserDao implements UserDao {
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
                 if (resultSet.next()) {
                     user = ROW_MAPPER.mapRow(resultSet);
-                    if (resultSet.next()) {
-                        throw new RuntimeException("More than one user was found for id");
-                    }
                 }
             }
         } catch (SQLException e) {
@@ -84,12 +81,10 @@ public class JdbcUserDao implements UserDao {
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
                 if (resultSet.next()) {
                     user = ROW_MAPPER.mapRow(resultSet);
-                    if (resultSet.next()) {
-                        throw new RuntimeException("More than one user was found for id");
-                    }
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         return Optional.ofNullable(user);

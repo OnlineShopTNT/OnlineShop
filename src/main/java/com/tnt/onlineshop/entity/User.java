@@ -1,5 +1,6 @@
 package com.tnt.onlineshop.entity;
 
+import java.util.Locale;
 import java.util.Objects;
 
 public class User {
@@ -23,7 +24,7 @@ public class User {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email == null ? null : email.toLowerCase();
     }
 
     public int getIterations() {
@@ -55,7 +56,11 @@ public class User {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return id == user.id && iterations == user.iterations && Objects.equals(email, user.email) && Objects.equals(salt, user.salt) && Objects.equals(hash, user.hash);
+        return id == user.id
+                && iterations == user.iterations
+                && Objects.equals(email == null? null: email.toLowerCase(), user.email == null ? null : user.email.toLowerCase())
+                && Objects.equals(salt, user.salt)
+                && Objects.equals(hash, user.hash);
     }
 
     @Override
