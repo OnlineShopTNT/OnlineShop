@@ -2,6 +2,7 @@ package com.tnt.onlineshop.web.servlets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.tnt.onlineshop.Starter;
 import com.tnt.onlineshop.entity.Session;
 import com.tnt.onlineshop.entity.User;
 import com.tnt.onlineshop.service.SessionService;
@@ -40,7 +41,7 @@ public class SignInServlet extends HttpServlet {
             if (optionalSession.isPresent()) {
                 String token = optionalSession.get().getToken();
                 Cookie cookie = new Cookie("user-token", token);
-                cookie.setMaxAge(60 * 60 * 5);
+                cookie.setMaxAge(Integer.parseInt(Starter.PROPERTIES_READER.getProperty("cookie.max.age")));
                 cookie.setHttpOnly(true);
                 response.addCookie(cookie);
                 response.setStatus(HttpServletResponse.SC_OK);

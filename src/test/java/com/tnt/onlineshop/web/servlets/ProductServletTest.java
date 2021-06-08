@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.tnt.onlineshop.entity.Product;
 import com.tnt.onlineshop.json.JsonConverter;
 import com.tnt.onlineshop.service.ProductService;
+import com.tnt.onlineshop.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,8 @@ import static org.mockito.Mockito.*;
 class ProductServletTest {
 
     private final ProductService mockedProductService = mock(ProductService.class);
-    private final ProductServlet productServlet = new ProductServlet(mockedProductService);
+    private final SessionService mockedSessionService = mock(SessionService.class);
+    private final ProductServlet productServlet = new ProductServlet(mockedProductService, mockedSessionService);
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
     private final InOrder inOrderResponse = inOrder(mockedResponse);

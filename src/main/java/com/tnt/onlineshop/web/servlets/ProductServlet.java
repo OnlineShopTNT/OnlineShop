@@ -3,8 +3,11 @@ package com.tnt.onlineshop.web.servlets;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.tnt.onlineshop.entity.Product;
+import com.tnt.onlineshop.entity.Session;
 import com.tnt.onlineshop.json.JsonConverter;
 import com.tnt.onlineshop.service.ProductService;
+import com.tnt.onlineshop.service.SessionService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,9 +21,11 @@ public class ProductServlet extends HttpServlet {
     private static final JsonConverter JSON_CONVERTER = new JsonConverter();
     private static final Gson GSON = new Gson();
     private final ProductService productService;
+    private final SessionService sessionService;
 
-    public ProductServlet(ProductService productService) {
+    public ProductServlet(ProductService productService, SessionService sessionService) {
         this.productService = productService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -53,9 +58,26 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Product product = JSON_CONVERTER.toProduct(request.getReader());
-        if (productService.add(product)) {
-            response.setStatus(HttpServletResponse.SC_OK);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null){
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("user-token")){
+                    String token = cookie.getValue();
+                    Optional<Session> userSession = sessionService.getByToken(token);
+                    if (userSession.isPresent()){
+                        Product product = JSON_CONVERTER.toProduct(request.getReader());
+                        if (productService.add(product)) {
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        } else {
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        }
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    }
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                }
+            }
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }

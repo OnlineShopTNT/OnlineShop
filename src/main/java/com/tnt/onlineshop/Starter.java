@@ -26,6 +26,8 @@ import javax.sql.DataSource;
 
 public class Starter {
 
+    public static final PropertiesReader PROPERTIES_READER = new PropertiesReader();
+
     public static void main(String[] args) throws Exception {
 
         //DAO
@@ -51,7 +53,7 @@ public class Starter {
         //WEB
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
 
-        ProductServlet productServlet = new ProductServlet(productService);
+        ProductServlet productServlet = new ProductServlet(productService, sessionService);
         SignInServlet signInServlet = new SignInServlet(userService, sessionService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
 

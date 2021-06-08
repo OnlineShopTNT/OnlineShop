@@ -4,18 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Session {
-    private long id;
     private String token;
     private LocalDateTime expireDate;
     private User user;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getToken() {
         return token;
@@ -46,21 +37,19 @@ public class Session {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Session session = (Session) o;
-        return id == session.id &&
-                Objects.equals(token, session.token) &&
+        return Objects.equals(token, session.token) &&
                 Objects.equals(expireDate, session.expireDate) &&
                 Objects.equals(user, session.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, token, expireDate, user);
+        return Objects.hash(token, expireDate, user);
     }
 
     @Override
     public String toString() {
         return "Session{" +
-                "id=" + id +
                 ", token='" + token + '\'' +
                 ", expireDate=" + expireDate +
                 ", user=" + user +

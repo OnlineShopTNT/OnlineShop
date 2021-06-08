@@ -7,8 +7,6 @@ import java.util.Optional;
 
 public interface SessionService {
 
-    Optional<Session> add(User user);
-
     Optional<Session> getByToken(String token);
 
     Optional<Session> getByUser(User user);
