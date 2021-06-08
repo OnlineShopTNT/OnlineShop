@@ -1,6 +1,5 @@
 package com.tnt.onlineshop.entity;
 
-import java.util.Locale;
 import java.util.Objects;
 
 public class User {
@@ -58,7 +57,7 @@ public class User {
         User user = (User) o;
         return id == user.id
                 && iterations == user.iterations
-                && Objects.equals(email == null? null: email.toLowerCase(), user.email == null ? null : user.email.toLowerCase())
+                && Objects.equals(email == null ? null : email.toLowerCase(), user.email == null ? null : user.email.toLowerCase())
                 && Objects.equals(salt, user.salt)
                 && Objects.equals(hash, user.hash);
     }

@@ -2,7 +2,6 @@ package com.tnt.onlineshop.web.servlets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.tnt.onlineshop.entity.Product;
 import com.tnt.onlineshop.service.UserService;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Optional;
 
 public class SignUpServlet extends HttpServlet {
 
@@ -26,7 +24,7 @@ public class SignUpServlet extends HttpServlet {
         Reader reader = request.getReader();
         JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
         boolean isAdded = userService.add(jsonObject.get("email").getAsString(), jsonObject.get("password").getAsString());
-        if(isAdded) {
+        if (isAdded) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);

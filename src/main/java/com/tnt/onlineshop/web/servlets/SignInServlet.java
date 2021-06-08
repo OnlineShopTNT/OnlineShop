@@ -48,7 +48,7 @@ public class SignInServlet extends HttpServlet {
                 jsonStringResponse = new JSONObject()
                         .put("message", "Successfully logged in!")
                         .toString();
-            }  else {
+            } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 jsonStringResponse = new JSONObject()
                         .put("message", "Session can't create!")

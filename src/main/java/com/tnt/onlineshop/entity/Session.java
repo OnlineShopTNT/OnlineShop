@@ -50,7 +50,7 @@ public class Session {
     @Override
     public String toString() {
         return "Session{" +
-                ", token='" + token + '\'' +
+                "token='" + token + '\'' +
                 ", expireDate=" + expireDate +
                 ", user=" + user +
                 '}';

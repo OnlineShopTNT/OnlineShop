@@ -12,4 +12,7 @@ public interface SessionService {
     Optional<Session> getByUser(User user);
 
     boolean delete(String token);
+
+    long deleteTooOldExpired();
+
 }

@@ -25,6 +25,7 @@ public class SecurityFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         String method = httpServletRequest.getMethod();
         String uri = httpServletRequest.getRequestURI();
+        //TODO: add session-only, no-session-only.
 
         if (uri.startsWith("/products") && !"GET".equals(method)) {
             Optional<String> token = Arrays.stream(httpServletRequest.getCookies())
