@@ -3,8 +3,8 @@ package com.tnt.onlineshop.web.servlets;
 import com.tnt.onlineshop.entity.User;
 import com.tnt.onlineshop.service.UserService;
 import com.tnt.onlineshop.service.impl.DefaultUserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +19,7 @@ class SignUpServletTest {
 
     private final UserService mockedUserService = mock(DefaultUserService.class);
 
-    private final SignUpServlet signUpServlet = new SignUpServlet(mockedUserService);
+    private final SignUpServlet signUpServlet = new SignUpServlet();
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
     private final User mockedUser = mock(User.class);

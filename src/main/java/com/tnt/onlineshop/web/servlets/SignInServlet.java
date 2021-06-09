@@ -2,30 +2,30 @@ package com.tnt.onlineshop.web.servlets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.tnt.onlineshop.Starter;
 import com.tnt.onlineshop.entity.Session;
 import com.tnt.onlineshop.entity.User;
 import com.tnt.onlineshop.service.SessionService;
 import com.tnt.onlineshop.service.UserService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.tnt.onlineshop.util.ServiceLocator;
 import org.json.JSONObject;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Optional;
 
 public class SignInServlet extends HttpServlet {
 
-    private UserService userService;
-    private SessionService sessionService;
+    private final UserService userService = (UserService) ServiceLocator.gerServiceMap("userService");
+    private final SessionService sessionService = (SessionService) ServiceLocator.gerServiceMap("sessionService");
 
-    public SignInServlet(UserService userService, SessionService sessionService) {
-        this.userService = userService;
-        this.sessionService = sessionService;
-    }
+//    public SignInServlet(UserService userService, SessionService sessionService) {
+//        this.userService = userService;
+//        this.sessionService = sessionService;
+//    }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -41,7 +41,7 @@ public class SignInServlet extends HttpServlet {
             if (optionalSession.isPresent()) {
                 String token = optionalSession.get().getToken();
                 Cookie cookie = new Cookie("user-token", token);
-                cookie.setMaxAge(Integer.parseInt(Starter.PROPERTIES_READER.getProperty("cookie.max.age")));
+                cookie.setMaxAge(Integer.parseInt(ServiceLocator.PROPERTIES_READER.getProperty("cookie.max.age")));
                 cookie.setHttpOnly(true);
                 response.addCookie(cookie);
                 response.setStatus(HttpServletResponse.SC_OK);

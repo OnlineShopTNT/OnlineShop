@@ -1,0 +1,31 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+          http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <display-name>OnlineShop</display-name>
+    <servlet>
+        <servlet-name>ProductServlet</servlet-name>
+        <servlet-class>com.tnt.onlineshop.web.servlets.ProductServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SignInServlet</servlet-name>
+        <servlet-class>com.tnt.onlineshop.web.servlets.SignInServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SignUpServlet</servlet-name>
+        <servlet-class>com.tnt.onlineshop.web.servlets.SignUpServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ProductServlet</servlet-name>
+        <url-pattern>/products</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SignInServlet</servlet-name>
+        <url-pattern>/sign-in</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SignUpServlet</servlet-name>
+        <url-pattern>/sign-up</url-pattern>
+    </servlet-mapping>
+</web-app>
