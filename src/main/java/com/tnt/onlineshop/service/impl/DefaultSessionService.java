@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class DefaultSessionService implements SessionService {
 
@@ -19,16 +20,14 @@ public class DefaultSessionService implements SessionService {
         Optional<Session> optionalSession = sessions.stream()
                 .filter(session -> session.getToken().equals(token))
                 .findFirst();
-        if (optionalSession.isPresent()){
+        if (optionalSession.isPresent()) {
             Session userSession = optionalSession.get();
-            if (userSession.getExpireDate().compareTo(LocalDateTime.now()) < 0){
-                sessions.remove(userSession);
-                return Optional.empty();
-            } else {
-                return optionalSession;
+            if (userSession.getExpireDate().compareTo(LocalDateTime.now()) < 0) {
+                userSession.setToken(UUID.randomUUID().toString());
+                userSession.setExpireDate(LocalDateTime.now().plusHours(5));
             }
         }
-        return Optional.empty();
+        return optionalSession;
     }
 
     @Override
@@ -64,6 +63,17 @@ public class DefaultSessionService implements SessionService {
         return isDeleted;
     }
 
+    @Override
+    public long deleteTooOldExpired() {
+        List<Session> tooOldSessions = sessions.stream()
+                .filter(session -> LocalDateTime.now().minusHours(30).compareTo(session.getExpireDate()) >= 0)
+                .collect(Collectors.toList());
+        sessions.removeAll(tooOldSessions);
+        long amountOfDeleted = tooOldSessions.size();
+        tooOldSessions.clear();
+        return amountOfDeleted;
+    }
+
     Optional<Session> add(User user) {
         Session session = new Session();
         session.setToken(UUID.randomUUID().toString());
@@ -75,6 +85,10 @@ public class DefaultSessionService implements SessionService {
 
     List<Session> getSessions() {
         return sessions;
+    }
+
+    void setSessions(List<Session> sessions) {
+        this.sessions = sessions;
     }
 
 }

@@ -46,14 +46,14 @@ class JdbcProductDaoITest {
     void beforeEach() throws SQLException {
         truncateProducts();
         try (PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
+            insertTime = Timestamp.from(Instant.now());
             for (int i = 0; i < 2; i++) {
                 insertStatement.setString(1, "product" + (1 + i));
                 insertStatement.setDouble(2, 1. + i);
-                insertStatement.setTimestamp(3, Timestamp.from(Instant.now()));
+                insertStatement.setTimestamp(3, insertTime);
                 insertStatement.addBatch();
             }
             insertStatement.executeBatch();
-            insertTime = Timestamp.from(Instant.now());
         }
     }
 

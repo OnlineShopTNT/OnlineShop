@@ -15,6 +15,7 @@ import javax.servlet.http.Cookie;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class ProductServlet extends HttpServlet {
@@ -54,27 +55,28 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null){
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("user-token")){
-                    String token = cookie.getValue();
-                    Optional<Session> userSession = sessionService.getByToken(token);
-                    if (userSession.isPresent()){
-                        Product product = JSON_CONVERTER.toProduct(request.getReader());
-                        if (productService.add(product)) {
-                            response.setStatus(HttpServletResponse.SC_OK);
-                        } else {
-                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        }
+        try {
+            Optional<String> optionalUserToken = Arrays.stream(request.getCookies())
+                    .filter(cookie -> "user-token".equals(cookie.getName()))
+                    .map(Cookie::getValue)
+                    .findAny();
+            if (optionalUserToken.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            } else {
+                Optional<Session> userSession = sessionService.getByToken(optionalUserToken.get());
+                if (userSession.isPresent()) {
+                    addUserTokenCookieToResponse(response, userSession.get().getToken());
+                    Product product = JSON_CONVERTER.toProduct(request.getReader());
+                    if (productService.add(product)) {
+                        response.setStatus(HttpServletResponse.SC_OK);
                     } else {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     }
                 } else {
-                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 }
             }
-        } else {
+        } catch (NullPointerException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
@@ -133,6 +135,13 @@ public class ProductServlet extends HttpServlet {
         String substringAfterLastSlash = uri.substring(lastSlashIndex + 1);
         int id = Integer.parseInt(substringAfterLastSlash);
         return id;
+    }
+
+    private void addUserTokenCookieToResponse(HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie("user-token", token);
+        cookie.setMaxAge(Integer.parseInt(ServiceLocator.PROPERTIES_READER.getProperty("cookie.max.age")));
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 
 }

@@ -2,9 +2,12 @@ package com.tnt.onlineshop.web.servlets;
 
 import com.google.gson.Gson;
 import com.tnt.onlineshop.entity.Product;
+import com.tnt.onlineshop.entity.Session;
 import com.tnt.onlineshop.json.JsonConverter;
 import com.tnt.onlineshop.service.ProductService;
 import com.tnt.onlineshop.service.SessionService;
+
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -118,30 +121,46 @@ class ProductServletTest {
     }
 
     @Test
-    @DisplayName("Tests that right methods in doPost are called when product is added successfully")
+    @DisplayName("Tests that right methods in doPost are called when product is added successfully and user has token for session")
     void doPostTest() throws IOException {
         //prepare
+        String token = "right token";
+        Session session = new Session();
+        session.setToken(token);
+        when(mockedRequest.getCookies()).thenReturn(new Cookie[]{new Cookie("user-token", token)});
+        when(mockedSessionService.getByToken(token)).thenReturn(Optional.of(new Session()));
         StringReader reader = new StringReader(gson.toJson(product));
         when(mockedRequest.getReader()).thenReturn(new BufferedReader(reader));
         when(mockedProductService.add(eq(product))).thenReturn(true);
         //when
         productServlet.doPost(mockedRequest, mockedResponse);
         //then
+        verify(mockedRequest).getCookies();
+        verify(mockedSessionService).getByToken(token);
+        verify(mockedResponse).addCookie(any());
         verify(mockedRequest).getReader();
         verify(mockedProductService).add(eq(product));
         verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
     }
 
     @Test
-    @DisplayName("Tests that right methods in doPost are called when product is added successfully")
+    @DisplayName("Tests that right methods in doPost are called when product is added successfully and user has token for session")
     void doPostFailedToAddTest() throws IOException {
         //prepare
+        String token = "right token";
+        Session session = new Session();
+        session.setToken(token);
+        when(mockedRequest.getCookies()).thenReturn(new Cookie[]{new Cookie("user-token", token)});
+        when(mockedSessionService.getByToken(token)).thenReturn(Optional.of(new Session()));
         StringReader reader = new StringReader(gson.toJson(product));
         when(mockedRequest.getReader()).thenReturn(new BufferedReader(reader));
         when(mockedProductService.add(eq(product))).thenReturn(false);
         //when
         productServlet.doPost(mockedRequest, mockedResponse);
         //then
+        verify(mockedRequest).getCookies();
+        verify(mockedSessionService).getByToken(token);
+        verify(mockedResponse).addCookie(any());
         verify(mockedRequest).getReader();
         verify(mockedProductService).add(eq(product));
         verify(mockedResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);

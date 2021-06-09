@@ -18,7 +18,7 @@ class DefaultSessionServiceTest {
     private User user;
     private User user2;
     private List<Session> sessions = sessionService.getSessions();
-    private Session session;
+    private Session sessionExpiredToken;
 
     @BeforeAll
     void beforeAll() {
@@ -39,16 +39,16 @@ class DefaultSessionServiceTest {
 
     @BeforeEach
     void beforeEach() {
-        session = new Session();
-        session.setToken("some-token");
-        session.setUser(user);
-        session.setExpireDate(LocalDateTime.now().plusHours(5));
-        sessions.add(session);
+        sessionExpiredToken = new Session();
+        sessionExpiredToken.setToken("some-token");
+        sessionExpiredToken.setUser(user);
+        sessionExpiredToken.setExpireDate(LocalDateTime.now().minusHours(5));
+        sessions.add(sessionExpiredToken);
     }
 
     @AfterEach
     void afterEach() {
-        sessions.remove(session);
+        sessions.clear();
     }
 
     @Test
@@ -75,16 +75,48 @@ class DefaultSessionServiceTest {
     }
 
     @Test
+    @DisplayName("Get session by token")
+    void getByTokenSessionDoesNotExistTest() {
+        //when
+        Optional<Session> optionalSession = sessionService.getByToken("new-token");
+        //then
+        assertTrue(optionalSession.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Get session by token")
+    void getByExpiredTokenTest() {
+        //prepare
+        sessionExpiredToken = new Session();
+        sessionExpiredToken.setToken("expired-token");
+        sessionExpiredToken.setUser(user2);
+        LocalDateTime expiredDate = LocalDateTime.now().minusHours(5);
+        sessionExpiredToken.setExpireDate(expiredDate);
+        List<Session> sessionsWithExpiredToken = new ArrayList<>(List.copyOf(sessions));
+        sessionsWithExpiredToken.add(sessionExpiredToken);
+        sessionService.setSessions(sessionsWithExpiredToken);
+        //when
+        Optional<Session> optionalActualSession = sessionService.getByToken("expired-token");
+        //then
+        assertTrue(optionalActualSession.isPresent());
+        assertEquals(optionalActualSession.get().getUser(), user2);
+        assertNotEquals(optionalActualSession.get().getToken(), "expired-token");
+        assertTrue(optionalActualSession.get().getExpireDate().compareTo(expiredDate) > 0);
+        sessionService.setSessions(sessions);
+    }
+
+    @Test
     @DisplayName("Get session by user if the session list is empty")
     void getByUserIfSessionListIsEmptyTest() {
         //prepared
-        List<Session> sessionList = new ArrayList<>(sessions);
+        List<Session> sessionList = new ArrayList<>(List.copyOf(sessions));
         sessions.clear();
         //when
         Optional<Session> optionalSession = sessionService.getByUser(user);
         //then
         assertTrue(optionalSession.isPresent());
         assertEquals(user.getId(), optionalSession.get().getUser().getId());
+        sessions.clear();
         sessions = new ArrayList<>(sessionList);
     }
 
@@ -126,12 +158,12 @@ class DefaultSessionServiceTest {
         //then
         assertTrue(optionalSession.isPresent());
         assertEquals(user.getId(), optionalSession.get().getUser().getId());
-        assertEquals(session.getExpireDate().getHour(), optionalSession.get().getExpireDate().getHour());
+        assertEquals(sessionExpiredToken.getExpireDate().getHour(), optionalSession.get().getExpireDate().getHour());
     }
 
     @Test
     @DisplayName("Delete session if session exist")
-    void deleteExistedSessionTest(){
+    void deleteExistedSessionTest() {
         //prepare
         Session session1 = new Session();
         session1.setToken("second-token");
@@ -146,11 +178,38 @@ class DefaultSessionServiceTest {
 
     @Test
     @DisplayName("Delete session")
-    void deleteSessionWhenSessionDoesNotExistTest(){
+    void deleteSessionWhenSessionDoesNotExistTest() {
         //when
         boolean isDeleted = sessionService.delete("second-token");
         //then
         assertFalse(isDeleted);
+    }
+
+    @Test
+    @DisplayName("Delete too old expired session when there is one")
+    void deleteTooOldExpiredTest() {
+        //prepare
+        Session tooOldExpiredSession = new Session();
+        tooOldExpiredSession.setExpireDate(LocalDateTime.now().minusHours(40));
+        List<Session> sessionsWithTooOld = new ArrayList<>(List.copyOf(sessions));
+        sessionsWithTooOld.add(tooOldExpiredSession);
+        sessionService.setSessions(sessionsWithTooOld);
+        //when
+        long actualAmountOfDeleted = sessionService.deleteTooOldExpired();
+        //then
+        assertEquals(1, actualAmountOfDeleted);
+        assertEquals(1, sessionService.getSessions().size());
+        assertFalse(sessionService.getSessions().contains(tooOldExpiredSession));
+        sessionService.setSessions(sessions);
+    }
+
+    @Test
+    @DisplayName("Delete too old expired session when there isn't one")
+    void deleteTooOldExpiredNoTooOldExpiredSessionTest() {
+        //when
+        long actualAmountOfDeleted = sessionService.deleteTooOldExpired();
+        //then
+        assertEquals(0, actualAmountOfDeleted);
     }
 
 }
