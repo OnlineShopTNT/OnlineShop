@@ -4,8 +4,8 @@ import com.tnt.onlineshop.entity.Session;
 import com.tnt.onlineshop.entity.User;
 import com.tnt.onlineshop.service.SessionService;
 import com.tnt.onlineshop.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ class SignInServletTest {
 
     private final UserService mockedUserService = mock(UserService.class);
     private final SessionService mockedSessionService = mock(SessionService.class);
-    private final SignInServlet signInServlet = new SignInServlet(mockedUserService, mockedSessionService);
+    private final SignInServlet signInServlet = new SignInServlet();
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);

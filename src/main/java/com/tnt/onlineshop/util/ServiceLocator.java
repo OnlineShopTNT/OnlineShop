@@ -1,4 +1,4 @@
-package com.tnt.onlineshop;
+package com.tnt.onlineshop.util;
 
 import com.tnt.onlineshop.dao.ProductDao;
 import com.tnt.onlineshop.dao.UserDao;
@@ -12,28 +12,22 @@ import com.tnt.onlineshop.service.UserService;
 import com.tnt.onlineshop.service.impl.DefaultProductService;
 import com.tnt.onlineshop.service.impl.DefaultSessionService;
 import com.tnt.onlineshop.service.impl.DefaultUserService;
-import com.tnt.onlineshop.util.PropertiesReader;
-import com.tnt.onlineshop.web.servlets.ProductServlet;
-import com.tnt.onlineshop.web.servlets.SignInServlet;
-import com.tnt.onlineshop.web.servlets.SignUpServlet;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 
-import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Starter {
+public class ServiceLocator {
 
+    private static final Map<String, Object> SERVICE_MAP = new HashMap<>();
     public static final PropertiesReader PROPERTIES_READER = new PropertiesReader();
 
-    public static void main(String[] args) throws Exception {
-
+    static {
         //DAO
+        PropertiesReader propertiesReader = new PropertiesReader();
         HikariDataSource dataSource;
         HikariConfig config = new HikariConfig();
-        PropertiesReader propertiesReader = new PropertiesReader();
         config.setJdbcUrl(propertiesReader.getProperty("jdbc.url"));
         config.setUsername(propertiesReader.getProperty("jdbc.user"));
         config.setPassword(propertiesReader.getProperty("jdbc.password"));
@@ -41,29 +35,22 @@ public class Starter {
         config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
 
-        ProductDao productDao = new JdbcProductDao(dataSource);
         UserDao userDao = new JdbcUserDao(dataSource);
+        ProductDao productDao = new JdbcProductDao(dataSource);
 
         //SERVICE
         SecurityService securityService = new DefaultSecurityService();
         ProductService productService = new DefaultProductService(productDao);
-        UserService userService = new DefaultUserService(userDao, securityService);
         SessionService sessionService = new DefaultSessionService();
+        UserService userService = new DefaultUserService(userDao, securityService);
 
-        //WEB
-        ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        SERVICE_MAP.put("productService", productService);
+        SERVICE_MAP.put("sessionService", sessionService);
+        SERVICE_MAP.put("userService", userService);
+    }
 
-        ProductServlet productServlet = new ProductServlet(productService, sessionService);
-        SignInServlet signInServlet = new SignInServlet(userService, sessionService);
-        SignUpServlet signUpServlet = new SignUpServlet(userService);
-
-        servletContextHandler.addServlet(new ServletHolder(productServlet), "/products/*");
-        servletContextHandler.addServlet(new ServletHolder(signInServlet), "/sign-in");
-        servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/sign-up");
-
-        Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
-        server.setHandler(servletContextHandler);
-        server.start();
+    public static Object gerServiceMap(String service){
+        return SERVICE_MAP.get(service);
     }
 
 }

@@ -7,10 +7,11 @@ import com.tnt.onlineshop.entity.Session;
 import com.tnt.onlineshop.json.JsonConverter;
 import com.tnt.onlineshop.service.ProductService;
 import com.tnt.onlineshop.service.SessionService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import com.tnt.onlineshop.util.ServiceLocator;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Cookie;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -20,13 +21,8 @@ public class ProductServlet extends HttpServlet {
 
     private static final JsonConverter JSON_CONVERTER = new JsonConverter();
     private static final Gson GSON = new Gson();
-    private final ProductService productService;
-    private final SessionService sessionService;
-
-    public ProductServlet(ProductService productService, SessionService sessionService) {
-        this.productService = productService;
-        this.sessionService = sessionService;
-    }
+    private final ProductService productService = (ProductService) ServiceLocator.gerServiceMap("productService");
+    private final SessionService sessionService = (SessionService) ServiceLocator.gerServiceMap("sessionService");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

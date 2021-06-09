@@ -7,6 +7,7 @@
     <groupId>org.example</groupId>
     <artifactId>online-shop</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,6 +18,7 @@
         <maven.compiler.plugin.vesrion>3.8.1</maven.compiler.plugin.vesrion>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <jacoco.maven.plugin.version>0.8.6</jacoco.maven.plugin.version>
+        <jetty.maven.plugin.version>9.4.36.v20210114</jetty.maven.plugin.version>
 
         <!--Dependencies-->
         <postgresql.version>42.2.17</postgresql.version>
@@ -25,7 +27,6 @@
         <jackson.version>2.12.3</jackson.version>
         <gson.version>2.8.6</gson.version>
         <json-simple.version>1.1</json-simple.version>
-        <jetty.version>11.0.2</jetty.version>
 
         <!--Test Dependencies-->
         <system.lambda.version>1.2.0</system.lambda.version>
@@ -71,18 +72,6 @@
             <artifactId>json-simple</artifactId>
             <version>${json-simple.version}</version>
         </dependency>
-        <!--JETTY-SERVER-->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <!--JETTY-SERVLET-->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
 
         <!--TESTS-->
 
@@ -107,6 +96,13 @@
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -120,6 +116,12 @@
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${jetty.maven.plugin.version}</version>
             </plugin>
 
             <plugin>
