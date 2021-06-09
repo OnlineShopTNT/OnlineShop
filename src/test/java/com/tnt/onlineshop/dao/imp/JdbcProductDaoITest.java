@@ -23,10 +23,10 @@ class JdbcProductDaoITest {
     private static final String INSERT = "INSERT INTO products (name, price, last_modified_time) VALUES(?, ?, ?)";
     private static final String SELECT_ALL = "SELECT id, name, price, last_modified_time FROM products";
     private static final ProductRowMapper rowMapper = new ProductRowMapper();
-    private static HikariDataSource dataSource;
-    private static ProductDao productDao;
-    private static Connection connection;
-    private static Timestamp insertTime;
+    private HikariDataSource dataSource;
+    private ProductDao productDao;
+    private Connection connection;
+    private Timestamp insertTime;
 
     @BeforeAll
     void beforeAll() throws SQLException {
@@ -46,14 +46,14 @@ class JdbcProductDaoITest {
     void beforeEach() throws SQLException {
         truncateProducts();
         try (PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
+            insertTime = Timestamp.from(Instant.now());
             for (int i = 0; i < 2; i++) {
                 insertStatement.setString(1, "product" + (1 + i));
                 insertStatement.setDouble(2, 1. + i);
-                insertStatement.setTimestamp(3, Timestamp.from(Instant.now()));
+                insertStatement.setTimestamp(3, insertTime);
                 insertStatement.addBatch();
             }
             insertStatement.executeBatch();
-            insertTime = Timestamp.from(Instant.now());
         }
     }
 

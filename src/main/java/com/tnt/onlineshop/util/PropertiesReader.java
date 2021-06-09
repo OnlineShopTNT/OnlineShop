@@ -11,15 +11,14 @@ public class PropertiesReader {
     private static final Properties properties = new Properties();
 
     public PropertiesReader() {
-        String env = System.getenv("env");
-        if (env == null) {
-            try (InputStream inputStream = PropertiesReader.class.getClassLoader().getResourceAsStream(INDEPENDENT_PROPERTIES_FILE)) {
-                validateInputStream(inputStream);
-                properties.load(inputStream);
-            } catch (IOException e) {
-                throw new RuntimeException("Error during loading properties from " + INDEPENDENT_PROPERTIES_FILE, e);
-            }
-        } else if (env.equals("PROD")) {
+        try (InputStream inputStream = PropertiesReader.class.getClassLoader().getResourceAsStream(INDEPENDENT_PROPERTIES_FILE)) {
+            validateInputStream(inputStream);
+            properties.load(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException("Error during loading properties from " + INDEPENDENT_PROPERTIES_FILE, e);
+        }
+
+        if ("PROD".equals(System.getenv("env"))) {
             URI databaseUri;
             String databaseUrlVariable = System.getenv("DATABASE_URL");
             String portVariable = System.getenv("PORT");

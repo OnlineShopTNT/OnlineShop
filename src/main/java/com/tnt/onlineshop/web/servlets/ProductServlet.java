@@ -2,25 +2,32 @@ package com.tnt.onlineshop.web.servlets;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.tnt.onlineshop.Starter;
 import com.tnt.onlineshop.entity.Product;
+import com.tnt.onlineshop.entity.Session;
 import com.tnt.onlineshop.json.JsonConverter;
 import com.tnt.onlineshop.service.ProductService;
+import com.tnt.onlineshop.service.SessionService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class ProductServlet extends HttpServlet {
 
-    private static final JsonConverter jsonConverter = new JsonConverter();
-    private static final Gson gson = new Gson();
+    private static final JsonConverter JSON_CONVERTER = new JsonConverter();
+    private static final Gson GSON = new Gson();
     private final ProductService productService;
+    private final SessionService sessionService;
 
-    public ProductServlet(ProductService productService) {
+    public ProductServlet(ProductService productService, SessionService sessionService) {
         this.productService = productService;
+        this.sessionService = sessionService;
     }
 
     @Override
@@ -32,13 +39,13 @@ public class ProductServlet extends HttpServlet {
         int lastSlashIndex = requestUri.lastIndexOf("/");
         String substringAfterLastSlash = requestUri.substring(lastSlashIndex + 1);
         if ("products".equals(substringAfterLastSlash)) {
-            jsonFormatProducts.append(jsonConverter.toJson(productService.findAll()));
+            jsonFormatProducts.append(JSON_CONVERTER.toJson(productService.findAll()));
         } else {
             try {
                 int id = Integer.parseInt(substringAfterLastSlash);
                 Optional<Product> product = productService.findById(id);
                 if (product.isPresent()) {
-                    jsonFormatProducts.append(gson.toJson(product.get()));
+                    jsonFormatProducts.append(GSON.toJson(product.get()));
                 } else {
                     responseStatus = HttpServletResponse.SC_NOT_FOUND;
                 }
@@ -53,10 +60,28 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Product product = jsonConverter.toProduct(request.getReader());
-        if (productService.add(product)) {
-            response.setStatus(HttpServletResponse.SC_OK);
-        } else {
+        try {
+            Optional<String> optionalUserToken = Arrays.stream(request.getCookies())
+                    .filter(cookie -> "user-token".equals(cookie.getName()))
+                    .map(Cookie::getValue)
+                    .findAny();
+            if (optionalUserToken.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            } else {
+                Optional<Session> userSession = sessionService.getByToken(optionalUserToken.get());
+                if (userSession.isPresent()) {
+                    addUserTokenCookieToResponse(response, userSession.get().getToken());
+                    Product product = JSON_CONVERTER.toProduct(request.getReader());
+                    if (productService.add(product)) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                    } else {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    }
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            }
+        } catch (NullPointerException e) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
@@ -66,7 +91,7 @@ public class ProductServlet extends HttpServlet {
         Reader reader = request.getReader();
         String requestUri = request.getRequestURI();
         int responseStatus = HttpServletResponse.SC_OK;
-        JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+        JsonObject jsonObject = GSON.fromJson(reader, JsonObject.class);
 
         try {
             int id = getIdFromUri(requestUri);
@@ -115,6 +140,13 @@ public class ProductServlet extends HttpServlet {
         String substringAfterLastSlash = uri.substring(lastSlashIndex + 1);
         int id = Integer.parseInt(substringAfterLastSlash);
         return id;
+    }
+
+    private void addUserTokenCookieToResponse(HttpServletResponse response, String token) {
+        Cookie cookie = new Cookie("user-token", token);
+        cookie.setMaxAge(Integer.parseInt(Starter.PROPERTIES_READER.getProperty("cookie.max.age")));
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 
 }
